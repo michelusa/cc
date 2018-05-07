@@ -1,0 +1,53 @@
+compare basic assembly output of pre- and post- increment in a for loop.
+commands like:
+	gcc -g -c forpost.cc 
+	objdump -d -M intel -S forpost.o
+
+result: assembly ouputs idnetical:
+
+	forpost.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <main>:
+
+int main()
+{
+   0:	55                   	push   rbp
+   1:	48 89 e5             	mov    rbp,rsp
+
+	for(auto i = 0; i < 100; i++);
+   4:	c7 45 fc 00 00 00 00 	mov    DWORD PTR [rbp-0x4],0x0
+   b:	83 7d fc 63          	cmp    DWORD PTR [rbp-0x4],0x63
+   f:	7f 06                	jg     17 <main+0x17>
+  11:	83 45 fc 01          	add    DWORD PTR [rbp-0x4],0x1
+  15:	eb f4                	jmp    b <main+0xb>
+}
+  17:	b8 00 00 00 00       	mov    eax,0x0
+  1c:	5d                   	pop    rbp
+  1d:	c3                   	ret    
+
+
+forpre.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <main>:
+
+int main()
+{
+   0:	55                   	push   rbp
+   1:	48 89 e5             	mov    rbp,rsp
+	for(auto j = 0; j < 100; ++j);
+   4:	c7 45 fc 00 00 00 00 	mov    DWORD PTR [rbp-0x4],0x0
+   b:	83 7d fc 63          	cmp    DWORD PTR [rbp-0x4],0x63
+   f:	7f 06                	jg     17 <main+0x17>
+  11:	83 45 fc 01          	add    DWORD PTR [rbp-0x4],0x1
+  15:	eb f4                	jmp    b <main+0xb>
+}
+  17:	b8 00 00 00 00       	mov    eax,0x0
+  1c:	5d                   	pop    rbp
+  1d:	c3                   	ret    
+
