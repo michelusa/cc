@@ -1,0 +1,2 @@
+Possibly reduce the memory required for structs by starting with highest
+alignment bytes members
