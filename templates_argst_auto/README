@@ -1,0 +1,4 @@
+C++17 templates argument type auto deduction
+some examples
+
+g++ -std=c++17
