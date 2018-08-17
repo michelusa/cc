@@ -1,0 +1,2 @@
+clear;g++ relax.cc  -std=c++17 -Wall -Wextra -lpthread
+not using -O style flags on purpose
