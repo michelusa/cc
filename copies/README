@@ -1,0 +1,2 @@
+reverse_copy and copy_backward
+g++ -std=c++17 -Wall -Wextra copies.cc
