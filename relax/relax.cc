@@ -70,7 +70,7 @@ void test(const unsigned n, const std::string& label, std::memory_order mem_orde
 void mutex_test(const unsigned n, const std::string& label, const bool micro)
 {
   std::vector<std::thread> workers;
-  counter = 0;
+  simple_counter = 0;
 
   auto start = std::chrono::system_clock::now();
   for(unsigned core_idx = 0; core_idx < n; ++core_idx) {
