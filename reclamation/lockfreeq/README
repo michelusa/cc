@@ -1,0 +1,3 @@
+multiple producers and multiple consumers
+a consumer will reclaim the memory allocated from producer
+g++ -fsanitize=address -fno-omit-frame-pointer -Wall -Wextra lockfreeq.cc  -lpthread
