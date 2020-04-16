@@ -1,0 +1,13 @@
+
+measuring impact of false sharing prevention between two threads
+sharing a structure
+g++ -fsanitize=address -fno-omit-frame-pointer -Wall -Wextra false_share.cc  -lpthread
+
+
+
+example excution result:
+size of short           : 2
+size of struct nopadding: 4
+size of struct yespadding: 66
+duration nopad: 51 milliseconds.
+duration yespad: 25 milliseconds.
