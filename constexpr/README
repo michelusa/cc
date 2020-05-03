@@ -1,0 +1,11 @@
+g++ -fsanitize=address -fno-omit-frame-pointer
+
+sample output:
+100000001
+constexpr duration(not including compile time!): 0 microseconds. result = 832040
+RT recurse duration: 4961 microseconds. result = 832040
+
+first, use constexpr to calculate binary representation
+second, use constepr to calculatte fibonacci
+
+compile time not included
