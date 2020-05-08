@@ -1,0 +1,9 @@
+
+multi-thread exchange of memory with safe reclamation using an epoch
+- 1 core for writer
+- other cores for readers
+- writer does allocation and free of each message
+- using an epoch synchronization based on an atomic variable
+
+
+g++ -fsanitize=address -fno-omit-frame-pointer -Wall faster_epoch.cc -pthread
