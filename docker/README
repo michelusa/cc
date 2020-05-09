@@ -1,0 +1,10 @@
+A C-language sample living in a docker container
+
+The multistage docker build produce an image size of ~6.5 MB
+
+
+docker build -t cc.doc .
+docker run -d --rm --name cc.cont cc.doc
+docker logs -f cc.doc
+
+
