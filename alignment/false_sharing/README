@@ -11,3 +11,9 @@ size of struct nopadding: 4
 size of struct yespadding: 66
 duration nopad: 51 milliseconds.
 duration yespad: 25 milliseconds.
+
+
+perf tools:
+sudo apt install linux-tools-common
+sudo apt install linux-tools-generic
+perf stat  -e L1-dcache-loads,L1-dcache-load-misses
