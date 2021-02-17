@@ -1,0 +1,17 @@
+upgrading gcc on my laptop ubuntu by building gcc 10+
+=====================================================
+(https://gcc.gnu.org/projects/cxx-status.html#cxx20)
+
+git clone git://gcc.gnu.org/git/gcc.git
+cd gcc
+ git checkout releases/gcc-10
+./contrib/download_prerequisites
+sudo apt-get install libmpc-dev flex
+mkdir objdir; cd objdir
+
+../configure --enable-languages=c,c++ --disable-multilib --prefix=/usr
+
+make -j8
+sudo make install
+
+
