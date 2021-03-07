@@ -7,3 +7,5 @@ multi-thread exchange of memory with safe reclamation using an epoch
 
 
 g++ -fsanitize=address -fno-omit-frame-pointer -Wall faster_epoch.cc -pthread
+or:
+mkdir -p build && cd build; cmake ..; cmake --build .; ./epoch; 

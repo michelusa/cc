@@ -15,7 +15,7 @@
  *  memory allocated and reclaim by writer
  */
 
-const unsigned N{1000000}; //count of tries
+const unsigned N{100000}; //count of tries
 const unsigned SZ{2048};//allocation size
 static const auto cores = std::thread::hardware_concurrency();
 
@@ -34,7 +34,8 @@ struct worker_record{
                 t = std::move(std::thread(read_it,idx));
         }
 };
-worker_record * workers[3];
+//worker_record * workers [7];
+std::vector<worker_record> workers;
 
 using namespace std::chrono_literals;
 
@@ -45,27 +46,6 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using namespace std::chrono;
-
-std::mutex log_mutex;
-void message(const std::string &log) {
-        std::lock_guard<std::mutex> guard(log_mutex);
-        cout << "thread " << std::this_thread::get_id();
-        cout << ":      " << log << endl;
-}
-
-void client_summary(unsigned iter) {
-        std::stringstream ss;
-        ss << "read " << iter << " times" << std::endl;
-        message(ss.str());
-}
-
-void writer_summary(unsigned iter, long duration) {
-
-        std::stringstream ss;
-        ss << "allocated and freed " << iter << " times in ";
-        ss << duration << " milliseconds." <<  endl;
-        message(ss.str());
-}
 
 /*
  * set thread on its core
@@ -96,18 +76,18 @@ void read_it(unsigned core_idx) {
 
 
                 auto x = *val_pointer;//PSEUDO WORK HERE
+		if ((int) x  != (int) iter % 127) 
+			cerr << "problem found " << (int)x << " " << (iter % 127 ) << endl;
                 ++iter;
 
-                workers[core_idx-1]->epoch_na =  current_epoch.load();
+                workers[core_idx-1].epoch_na =  current_epoch.load();
 
                 //wait for something new to read
-                while (workers[core_idx-1]->epoch_na ==  current_epoch.load())
+                while (workers[core_idx-1].epoch_na ==  current_epoch.load())
                         ;
                 if (iter == N)
                         break;
         }
-
-        client_summary(iter);
 }
 
 //one writer exactly
@@ -117,19 +97,20 @@ void write_it() {
 
         unsigned iter{0};
 
-        const auto start_time = system_clock::now();
+        //const auto start_time = system_clock::now();
 
         while (iter < N) {
-                ++iter;
 
                 val_pointer = new char[SZ];
                 *val_pointer = iter % 127;
 
+                ++iter;
                 ++current_epoch;//atomic
 
+        start = true;
                 //all readers must catch up to  epoch
                 for (unsigned i = 0; i < cores - 1; ++i) {
-                        while (workers[i]->epoch_na < current_epoch.load())
+                        while (workers[i].epoch_na < current_epoch.load())
                                 ;
                 }
 
@@ -143,10 +124,9 @@ void write_it() {
 
         }
 
+	cout << "prod done  \n";
 
-        const duration<double> duration = system_clock::now() - start_time;
 
-        writer_summary(iter, duration_cast<milliseconds>(duration).count());
 }
 
 auto main() -> int {
@@ -156,21 +136,18 @@ auto main() -> int {
                 return 1;
         }
 
-        for (unsigned idx = 1; idx < cores; ++idx) {
-                workers[idx - 1] = new worker_record(idx );
+        for (unsigned idx = 1; idx <  cores; ++idx) {
+                workers.emplace_back(idx );
                 cout << "created worker: "<< (idx - 1) << endl;
         }
 
         std::thread writer(write_it);
         cout << "created producer" << endl;
 
-        //give time to producer to alloc one before reading
-        std::this_thread::sleep_for(2s);
-        start = true;
 
-        for (unsigned idx = 1; idx < cores; ++idx) {
-                workers[idx - 1]->t.join();
-                delete workers[idx - 1];
+        for (auto idx = 0; idx < 7; ++idx) {
+                workers[idx ].t.join();
+		cout << "joined reader " << (idx ) << endl;
         }
         writer.join();
 
